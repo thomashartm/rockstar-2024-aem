@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>digitalxn-aem</artifactId>
+        <groupId>biz.netcentric.digitalxn.aem</groupId>
+        <version>${revision}</version>
+    </parent>
+    
+    <artifactId>digitalxn-aem-all-container</artifactId>
+    <packaging>content-package</packaging>
+    <name>DigitalXn - All - Container Package</name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.jackrabbit</groupId>
+                <artifactId>filevault-package-maven-plugin</artifactId>
+                <configuration>
+                    <packageType>container</packageType>
+                    <embeddedTarget>/apps/digitalxn/install</embeddedTarget>
+                    <embeddeds>
+                        <embedded combine.self="override">
+                            <artifactId>~digitalxn-aem-workflows-author-content</artifactId>
+                            <filter>true</filter>
+                            <type>jar,content-package,zip</type>
+                            <scope>compile</scope>
+                            <!-- only consider direct dependencies -->
+                            <excludeTransitive>true</excludeTransitive>
+                            <isAllVersionsFilter>true</isAllVersionsFilter>
+                        </embedded>
+                        <embedded>
+                            <artifactId>digitalxn-aem-workflows-author-content</artifactId>
+                            <filter>true</filter>
+                            <target>/apps/digitalxn-packages/content/install.author</target>
+                        </embedded>
+                    </embeddeds>
+                    <properties>
+                        <!-- Set Cloud Manager Target to something but "none" to deploy via CloudManager -->
+                        <cloudManagerTarget>deploy</cloudManagerTarget>
+                    </properties>
+                    <!-- all sub packages are part of the reactor (i.e. have been validated already) -->
+                    <skipSubPackageValidation>true</skipSubPackageValidation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <!-- https://experienceleague.adobe.com/docs/experience-manager-core-components/using/developing/archetype/build-analyzer-maven-plugin.html?lang=en#developing  -->
+                <groupId>com.adobe.aem</groupId>
+                <artifactId>aemanalyser-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <artifactId>digitalxn-aem-base-core</artifactId>
+            <groupId>biz.netcentric.digitalxn.aem</groupId>
+            <version>${project.version}</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <artifactId>digitalxn-aem-base-apps</artifactId>
+            <groupId>biz.netcentric.digitalxn.aem</groupId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <artifactId>digitalxn-aem-base-clientlibs-apps</artifactId>
+            <groupId>biz.netcentric.digitalxn.aem</groupId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <artifactId>digitalxn-aem-overlays-apps</artifactId>
+            <groupId>biz.netcentric.digitalxn.aem</groupId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <artifactId>digitalxn-aem-osgiconfig-container</artifactId>
+            <groupId>biz.netcentric.digitalxn.aem</groupId>
+            <version>${project.version}</version>
+            <type>zip</type>
+        </dependency>
+    </dependencies>
+
+</project>

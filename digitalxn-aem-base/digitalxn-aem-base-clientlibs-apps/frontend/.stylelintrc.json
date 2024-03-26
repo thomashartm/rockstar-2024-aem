@@ -1,0 +1,24 @@
+{
+  "plugins": ["stylelint-scss", "stylelint-no-unsupported-browser-features"],
+  "extends": ["@nc/stylelint-config", "stylelint-config-prettier"],
+  "rules": {
+    "value-keyword-case": null,
+    "custom-property-empty-line-before": null,
+    "at-rule-no-unknown": null,
+    "scss/at-rule-no-unknown": true,
+    "selector-max-specificity": null,
+    "no-descending-specificity": null,
+    "max-nesting-depth": 8,
+    "selector-max-compound-selectors": null,
+    "no-duplicate-selectors": null,
+    "plugin/no-unsupported-browser-features": [
+      true,
+      {
+        "browsers": ["last 2 versions", "not ie > 0", "iOS >= 9", "Android >= 5", "not dead", "not OperaMini all"],
+        "ignore": ["rem", "css3-cursors", "visiblity"],
+        "ignorePartialSupport": true
+      }
+    ]
+  },
+  "ignoreFiles": ["**/*.css", "**/*.js", "**/node_modules/**"]
+}

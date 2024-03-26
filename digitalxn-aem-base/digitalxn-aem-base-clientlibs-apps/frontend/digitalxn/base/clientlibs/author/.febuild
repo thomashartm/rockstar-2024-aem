@@ -1,0 +1,43 @@
+const path = require('path');
+const projectKey = 'digitalxn';
+const cwd = process.cwd();
+const nodeModules = path.join(cwd, 'node_modules');
+
+const sourcesPath = path.dirname(__filename);
+const destinationPath = sourcesPath.replace('frontend', 'src/main/jcr_root/apps');
+
+// sass
+const publishPath = sourcesPath.replace('author', 'publish');
+const styles = path.join(publishPath, 'theme');
+const includePaths = [nodeModules, styles];
+
+module.exports = {
+  general: {
+    projectKey,
+    sourcesPath,
+    destinationPath
+  },
+  output: {
+    jsonpFunction: 'digitalxnAuthorJsonp ',
+  },
+  sass: {
+    includePaths,
+  },
+  babel: {
+    use: {
+      options: {
+        plugins: [
+              '@babel/plugin-transform-destructuring',
+              '@babel/plugin-proposal-class-properties'
+          ]
+      },
+    },
+    exclude: /node_modules\/(?!@nc)/
+  },
+  resolve: {
+    alias: {
+      'digitalxn': sourcesPath,
+    },
+    modules: [nodeModules],
+  },
+};

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- the format of this file is described at http://jackrabbit.apache.org/filevault/filter.html -->
+<workspaceFilter version="1.0">
+    <filter root="/apps/wcm">
+        <include pattern="/apps/wcm"/>
+        <include pattern="/apps/wcm/core"/>
+        <include pattern="/apps/wcm/core/content"/>
+        <include pattern="/apps/wcm/core/content/editor"/>
+        <include pattern="/apps/wcm/core/content/editor/jcr:content"/>
+        <include pattern="/apps/wcm/core/content/editor/jcr:content/sidepanels"/>
+        <include pattern="/apps/wcm/core/content/editor/jcr:content/sidepanels/edit"/>
+        <include pattern="/apps/wcm/core/content/editor/jcr:content/sidepanels/edit/items"/>
+        <include pattern="/apps/wcm/core/content/editor/jcr:content/sidepanels/edit/items/tabs"/>
+        <include pattern="/apps/wcm/core/content/editor/jcr:content/sidepanels/edit/items/tabs/items"/>
+        <include pattern="/apps/wcm/core/content/editor/jcr:content/sidepanels/edit/items/tabs/items/themeTab(.*)"/>
+    </filter>
+</workspaceFilter>

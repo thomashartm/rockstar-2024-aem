@@ -1,0 +1,4 @@
+{
+    "hmac":"$[secret:CUSTOM_ENV_CHATAEM_HMAC_KEY]",
+    "url":"$[env:CUSTOM_ENV_CHATAEM_URL]"
+}

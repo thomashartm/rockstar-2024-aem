@@ -1,0 +1,56 @@
+{
+  "name": "fe-build-setup",
+  "version": "3.0.0",
+  "description": "FE build setup",
+  "private": true,
+  "paths": {
+    "configs": "./config",
+    "tasks": "./tasks"
+  },
+  "scripts": {
+    "build": "nc-fe-build",
+    "build:css": "nc-fe-build --task=styles",
+    "build:js": "nc-fe-build --task=webpack",
+    "build:clientlibs": "nc-fe-build --task=clientlibs",
+    "watch": "npm-run-all --parallel watch:hotdeploy watch:js watch:css",
+    "watch:js": "NODE_ENV=development nc-fe-build --task=webpack --watch",
+    "watch:css": "NODE_ENV=development nc-fe-build --task=styles --watch",
+    "watch:hotdeploy": "cd ../ && mvn cq:hotdeploy -Pnetcentric -DnoStdin",
+    "analyze": "NODE_ENV=production nc-fe-build --task=webpack",
+    "debug:css": "node $NODE_DEBUG_OPTION tasks/run.js --task=styles",
+    "lint:css": "stylelint \"./**/*.scss\"",
+    "lint:js": "eslint \"./**/*.js\"",
+    "prepare": "cd ../../.. husky install husky/.husky",
+    "prettier": "prettier --write ."
+  },
+  "dependencies": {
+    "@babel/plugin-proposal-class-properties": "7.4.4",
+    "@babel/plugin-transform-destructuring": "7.2.0",
+    "@nc/component-loader": "^0.2.0",
+    "@nc/fe-build": "^1.0.6",
+    "@nc/stylelint-config": "3.0.0",
+    "eslint": "^7.15.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "npm-run-all": "^4.1.5",
+    "pubsub-js": "^1.9.3",
+    "stylelint": "~13.7.1",
+    "stylelint-no-unsupported-browser-features": "^5.0.2",
+    "stylelint-scss": "^3.18.0",
+    "prettier": "2.4.1",
+    "stylelint-config-prettier": "^8.0.2",
+    "eslint-config-prettier": "^8.3.0"
+  },
+  "devDependencies": {
+    "husky": "^7.0.0",
+    "webpack-bundle-analyzer": "^3.6.0"
+  },
+  "browserslist": [
+    "last 2 versions",
+    "not ie > 0",
+    "iOS >= 9",
+    "Android >= 5",
+    "not dead",
+    "not OperaMini all"
+  ],
+  "license": "UNLICENSED"
+}

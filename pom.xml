@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>digitalxn-aem</artifactId>
+    <groupId>biz.netcentric.digitalxn.aem</groupId>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>biz.netcentric.aem</groupId>
+        <artifactId>aem-cloud-parent</artifactId>
+        <version>2.0.11</version>
+    </parent>
+
+    <name>ChatAEM</name>
+    <description>Netcentric AEM Rockstars Demo 2024</description>
+    <version>${revision}</version>
+
+    <organization>
+        <name>Netcentric</name>
+        <url>https://www.netcentric.biz</url>
+    </organization>
+
+    <!-- override properties from parent poms with project specific values -->
+    <properties>
+        <!-- Version of the whole reactor (DRY to simplify merges and git conflict resolution) -->
+        <revision>2.4.4</revision>
+
+        <!-- group name of packages which are created from submodules -->
+        <package.group>digitalxn</package.group>
+
+        <cq.dependencies.version>2021.12.6151.20211217T120950Z-211100.0000</cq.dependencies.version>
+
+        <cq.port>4502</cq.port>
+        <cq.user>admin</cq.user>
+        <cq.password>admin</cq.password>
+
+        <bundle.category>digitalxn</bundle.category> <!-- bundle category with this value is automatically added to each bundle's manifest -->
+        <java.target.version>8</java.target.version> <!-- used for compiler plugin and animal-sniffer, for the format see source property of http://docs.oracle.com/javase/7/docs/technotes/tools/windows/javac.html -->
+        <maven.version>3.3.9</maven.version> <!-- required for aem-rules-enforcer-maven-plugin -->
+        <acs.aem.commons.version>6.0.6</acs.aem.commons.version>
+
+        <!-- SCM. Do not change variables names since the automation blueprint setup tool rely on the naming. -->
+        <scm.connection>scm:git:ssh://git@github.com:thomashartm/rockstar-2024-aem.git</scm.connection>
+        <scm.developerConnection>scm:git:ssh://git@github.com:thomashartm/rockstar-2024-aem.git</scm.developerConnection>
+        <scm.url>https://github.com/thomashartm/rockstar-2024-aem</scm.url>
+
+    </properties>
+
+    <scm>
+        <!-- read access to the SCM via this URL -->
+        <connection>${scm.connection}</connection>
+        <!-- write access to the SCM via this URL (e.g. used by the maven-release-plugin) -->
+        <developerConnection>${scm.developerConnection}</developerConnection>
+        <!-- repository browser access -->
+        <url>${scm.url}</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>nexus</id>
+            <name>Release Repository</name>
+            <url>${dm.release.url}</url>
+        </repository>
+        <snapshotRepository>
+            <id>nexus</id>
+            <name>Snapshot Repository</name>
+            <url>${dm.snapshot.url}</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- some testing dependencies used throughout the whole project -->
+            <dependency>
+                <groupId>org.junit</groupId>
+                <artifactId>junit-bom</artifactId>
+                <version>5.7.0</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <version>2.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-core</artifactId>
+                <version>3.5.13</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>3.6.28</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.wcm</groupId>
+                <artifactId>io.wcm.testing.aem-mock.junit5</artifactId>
+                <version>4.1.6</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Jetbrains annotations for null-analysis (SLING-7798) -->
+            <dependency>
+                <groupId>org.jetbrains</groupId>
+                <artifactId>annotations</artifactId>
+                <version>16.0.2</version>
+                <scope>provided</scope>
+            </dependency>
+            <!-- for testing OSGi DS component property types -->
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.converter</artifactId>
+                <version>1.0.14</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <!-- these plugins are executed for all Maven project packagings (content-package, bundle, pom and others) -->
+        <plugins>
+            <!-- ensure only pom files without ${revision} property are pushed to nexus -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+            </plugin>
+            <!-- some generic checks for correct Java version and Maven version -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+            <!-- checks for violations of AEM best practices (applies to both bundles and packages) -->
+            <plugin>
+                <groupId>biz.netcentric.maven</groupId>
+                <artifactId>aem-rules-enforcer-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.jackrabbit</groupId>
+                    <artifactId>filevault-package-maven-plugin</artifactId>
+                    <configuration>
+                        <validatorsSettings>
+                            <jackrabbit-filter>
+                                <!-- define additional valid roots which are always provided in AEM -->
+                                <options>
+                                    <validRoots>/,/libs,/apps,/apps/msm,/apps/digitalxn,/apps/digitalxn/base,/etc,/var,/tmp,/conf,/conf/digitalxn,/conf/global/workflow/models/digitalxn,/content,/content/campaigns/,/content/cq:tags/,/content/dam,/content/experience-fragments/,/content/projects/,/content/screens/,/etc/packages</validRoots>
+                                </options>
+                            </jackrabbit-filter>
+                            <netcentric-aem-cloud>
+                                <options>
+                                    <allowReadOnlyMutablePaths>false</allowReadOnlyMutablePaths>
+                                </options>
+                            </netcentric-aem-cloud>
+                        </validatorsSettings>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>biz.netcentric.cq.buildext</groupId>
+                    <artifactId>cq-build-extensions-plugin</artifactId>
+                    <configuration>
+                        <!-- Since bundles are only contained in all-container that is skipped by default
+                            deployBundles makes sure that "mvn cq:deploy" also deploys the bundles in reactor -->
+                        <deployBundles>true</deployBundles>
+                        <apacheDispatcherPorts>8003</apacheDispatcherPorts>
+                        <!-- Ignores deployment of packages that are to be installed into a single environment, such as author -->
+                        <ignorePackageForDeployRegEx>.*-(author).*</ignorePackageForDeployRegEx>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>xml-maven-plugin</artifactId>
+                    <version>1.0.2</version>
+                </plugin>
+                <plugin>
+                    <!-- https://experienceleague.adobe.com/docs/experience-manager-core-components/using/developing/archetype/build-analyzer-maven-plugin.html?lang=en#developing  -->
+                    <groupId>com.adobe.aem</groupId>
+                    <artifactId>aemanalyser-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>analyse</id>
+                            <configuration>
+                                <!-- custom tasks due to https://github.com/adobe/aemanalyser-maven-plugin/issues/15 -->
+                                <includeTasks>
+                                    <!-- all from https://github.com/adobe/aemanalyser-maven-plugin/blob/4022cc92703ecdc97efd160fd2a9294efdf01811/aemanalyser-maven-plugin/src/main/java/com/adobe/aem/analyser/AemAnalyser.java#L45, except requirements-capabilities -->
+                                    <task>bundle-content</task>
+                                    <task>bundle-resources</task>
+                                    <task>bundle-nativecode</task>
+                                    <task>api-regions</task>
+                                    <task>api-regions-check-order</task>
+                                    <task>api-regions-crossfeature-dups</task>
+                                    <task>api-regions-exportsimports</task>
+                                    <task>repoinit</task>
+                                    <task>configuration-api</task>
+                                    <task>region-deprecated-api</task>
+                                </includeTasks>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <modules>
+        <!-- 3rd-party container must be the first -->
+
+        <module>digitalxn-aem-base</module>
+        <module>digitalxn-aem-osgiconfig-container</module>
+        <module>digitalxn-aem-overlays-apps</module>
+        <!-- The "all" container must be the last -->
+        <module>digitalxn-aem-all-container</module>
+    </modules>
+
+    <profiles>
+        <!-- this profile is active for bundles only and for pom reactor/parent modules -->
+        <profile>
+            <id>packaging-bundle</id>
+            <!-- profile inheritance does not work in Maven (https://issues.apache.org/jira/browse/MNG-5127)
+                therefore the activation section needs to be copied from cq-parent -->
+            <activation>
+                <file>
+                    <!-- multiple conditions not supported (http://stackoverflow.com/a/33040416/5155923) -->
+                    <exists>${basedir}/src/main/java</exists>
+                </file>
+            </activation>
+            <build>
+                <plugins>
+                    <!-- enable spotbugs for all bundles (for null annotation analysis) -->
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                    </plugin>
+                    <!-- for checking if the right Java SE API is used -->
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>animal-sniffer-maven-plugin</artifactId>
+                    </plugin>
+                    <!-- checks for usage of default locale, timezone and charsets (http://blog.thetaphi.de/2012/07/default-locales-default-charsets-and.html) -->
+                    <plugin>
+                        <groupId>de.thetaphi</groupId>
+                        <artifactId>forbiddenapis</artifactId>
+                    </plugin>
+                    <!-- plugin to format java source files -->
+                    <plugin>
+                        <groupId>net.revelc.code.formatter</groupId>
+                        <artifactId>formatter-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!-- this profile is active for content-packages only -->
+            <id>packaging-contentpackage</id>
+            <!-- profile inheritance does not work in Maven (https://issues.apache.org/jira/browse/MNG-5127)
+                therefore the activation section needs to be copied from cq-parent -->
+            <activation>
+                <file>
+                    <exists>${basedir}/src/main/jcr_root</exists>
+                </file>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.apache.jackrabbit</groupId>
+                            <artifactId>filevault-package-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <!-- http://jackrabbit.apache.org/filevault-package-maven-plugin/format-xml-mojo.html -->
+                                    <id>format-xml</id>
+                                    <goals>
+                                        <goal>format-xml</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <plugin>
+                        <!-- Validate HTL (Sightly) files during build time -->
+                        <groupId>org.apache.sling</groupId>
+                        <artifactId>htl-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
+</project>

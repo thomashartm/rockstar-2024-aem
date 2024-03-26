@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0" xmlns:granite="http://www.adobe.com/jcr/granite/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="cq:Page">
+    <jcr:content jcr:primaryType="nt:unstructured">
+        <sidepanels jcr:primaryType="nt:unstructured">
+            <edit jcr:primaryType="nt:unstructured">
+                <items jcr:primaryType="nt:unstructured">
+                    <tabs jcr:primaryType="nt:unstructured">
+                        <items jcr:primaryType="nt:unstructured">
+                            <themeTab
+                                granite:class="sidepanel-tab sidepanel-tab-theme editor-theme"
+                                jcr:primaryType="nt:unstructured"
+                                jcr:title="ChatAEM"
+                                sling:resourceType="granite/ui/components/coral/foundation/container">
+                                <granite:data
+                                    jcr:primaryType="nt:unstructured"
+                                    headerTitle="ChatAEM Configurator"/>
+                                <parentConfig
+                                    jcr:primaryType="nt:unstructured"
+                                    icon="chat"/>
+                                <clientlibs
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
+                                    categories="[digitalxn.author.chataem-sidebar]"/>
+                                <items jcr:primaryType="nt:unstructured">
+                                    <filterPanel
+                                        granite:class="themepanel"
+                                        granite:id="themepanel-sidebar"
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/container">
+                                        <granite:data
+                                            jcr:primaryType="nt:unstructured"
+                                            nc="ChatAEMSidebar"/>
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <chataemauth
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="digitalxn/base/components/chataemauth"
+                                                type="component"/>
+                                        </items>
+                                    </filterPanel>
+                                </items>
+                            </themeTab>
+                        </items>
+                    </tabs>
+                </items>
+            </edit>
+        </sidepanels>
+    </jcr:content>
+</jcr:root>

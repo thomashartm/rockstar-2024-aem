@@ -1,0 +1,18 @@
+<sly data-sly-use.clientlibs="${'com.adobe.cq.wcm.core.components.models.ClientLibraries' @
+    categories='digitalxn.author.chataem', defer=true}">
+    ${clientlibs.jsAndCssIncludes @ context="unsafe"}
+</sly>
+<div data-sly-use.chatauth="biz.netcentric.digitalxn.aem.models.ChatAemAuth"
+     data-sly-use.component="com.adobe.cq.wcm.core.components.models.Component"
+     data-chataem-token="${chatauth.token}"
+     data-chataem-appurl="${chatauth.appUrl}"
+     class="chataem-data">
+     ChatAEM Client: ${chatauth.appUrl}
+</div>
+<script>
+    const dataElement =  document.querySelector('.chataem-data');
+    let appUrl = dataElement.dataset['data-chataem-appurl'];
+    let token = dataElement.dataset['data-chataem-token'];
+    console.log(appUrl + " " + token);
+</script>
+

@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>digitalxn-aem-base</artifactId>
+        <groupId>biz.netcentric.digitalxn.aem</groupId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>digitalxn-aem-base-clientlibs-apps</artifactId>
+    <packaging>content-package</packaging>
+    <name>DigitalXn - Base - Clientlibs - Apps Package</name>
+
+    <properties>
+        <frontend.build.directory>${project.basedir}/frontend</frontend.build.directory>
+        <npm.arguments>install --production</npm.arguments>
+        <npm.arguments.build>run build</npm.arguments.build>
+        <npm.arguments.build.noTest>run build</npm.arguments.build.noTest>
+        <npm.arguments.sass>rebuild node-sass</npm.arguments.sass>
+        <clientlib.lastModification>${maven.build.timestamp}</clientlib.lastModification>
+        <node.env>production</node.env>
+        <node.version>v14.19.3</node.version>
+        <npm.version>6.14.17</npm.version>
+    </properties>
+
+    <build>
+        <plugins>   
+            <plugin>
+                <groupId>org.apache.jackrabbit</groupId>
+                <artifactId>filevault-package-maven-plugin</artifactId>
+                <configuration>
+                    <packageType>application</packageType>
+                </configuration>
+            </plugin>
+            <!--do some filtering on the src to correctly replace the longCacheKey valu
+                // TODO: FIXME
+            e-->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-resources</id>
+                        <configuration>
+                            <!-- make sure you always overwrite the one with the replaced placeholders! -->
+                            <overwrite>true</overwrite>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>insert-clientlib-cachekey</id>
+                        <!-- after the sources have been copied to package/jcr_root-->
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/jcr_root</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/jcr_root</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/.content.xml</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/jcr_root</directory>
+                                    <filtering>false</filtering>
+                                    <excludes>
+                                        <exclude>**/.content.xml</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>1.12.1</version>
+                <configuration>
+                    <workingDirectory>${frontend.build.directory}</workingDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                       <!-- id as a join string slug -->
+                        <id>install-node-and-npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>${node.version}</nodeVersion>
+                            <npmVersion>${npm.version}</npmVersion>
+                            <nodeDownloadRoot>https://nodejs.org/dist/</nodeDownloadRoot>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- id as a join string slug -->
+                        <id>run-npm-install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>${npm.arguments}</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- id as a join string slug -->
+                        <id>run-fe-build</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>${npm.arguments.build}</arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <!-- id as a join string slug -->
+                        <id>rebuild-node-sass</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>${npm.arguments.sass}</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>biz.netcentric.cq.buildext</groupId>
+                <artifactId>cq-build-extensions-plugin</artifactId>
+                <configuration>
+                    <additionalHotDeploymentPaths>${project.basedir}/target/jcr_root
+                        ${project.basedir}/../digitalxn-aem-base-apps/src/main/jcr_root
+                    </additionalHotDeploymentPaths>
+                    <fullDeployPath>..</fullDeployPath>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+      <profile>
+          <id>full</id>
+
+          <activation>
+              <activeByDefault>true</activeByDefault>
+          </activation>
+
+          <build>
+              <plugins>
+                  <!-- maven plugin to download node.js and npm and run a node script afterwards -->
+                  <plugin>
+                      <groupId>biz.netcentric.cq.buildext</groupId>
+                      <artifactId>cq-build-extensions-plugin</artifactId>
+                  </plugin>
+              </plugins>
+          </build>
+      </profile>
+
+      <!-- clean command also clean all installed node / npm / node_modules -->
+      <profile>
+          <id>clean-nodejs</id>
+          <activation>
+          </activation>
+          <build>
+              <plugins>
+                  <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-clean-plugin</artifactId>
+                      <executions>
+                          <execution>
+                              <id>clean-nodejs</id>
+                              <goals>
+                                  <goal>clean</goal>
+                              </goals>
+                              <phase>clean</phase>
+                              <configuration>
+                                  <filesets>
+                                      <fileset>
+                                          <directory>${frontend.build.directory}/node</directory>
+                                          <useDefaultExcludes>false</useDefaultExcludes>
+                                      </fileset>
+                                      <fileset>
+                                          <directory>${frontend.build.directory}/node_modules</directory>
+                                          <useDefaultExcludes>false</useDefaultExcludes>
+                                      </fileset>
+                                  </filesets>
+                              </configuration>
+                          </execution>
+                      </executions>
+                  </plugin>
+              </plugins>
+          </build>
+      </profile>
+      <!-- Profile to skip some executions of this package -->
+      <profile>
+            <id>skip-frontend</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>install-node-and-npm</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>run-npm-install</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>run-fe-build</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>default-resources</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>rebuild-node-sass</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- Profile to skip some executions of this package -->
+        <profile>
+            <id>skip-node-npm-install</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>install-node-and-npm</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>run-npm-install</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>rebuild-node-sass</id>
+                                <phase>none</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

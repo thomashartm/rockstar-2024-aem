@@ -22,7 +22,7 @@ Apply the clientlibs, the overlay, component and javacode to you onw project and
 
 Make sure to have the following projetcs rolled out:
 
-| Project  | Purpose |
+| Project  | Description |
 | -------- | ------- | 
 | [ChatAEM Client App](https://github.com/thomashartm/rockstar-2024-client)| ChatAEM RAG application and LLM integration API. |
 | [ChatAEM Terraform Infrastructure](https://github.com/thomashartm/rockstar-2024-client) | Provides the necessary AWS infrastructure. |

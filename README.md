@@ -18,3 +18,14 @@ Apply the clientlibs, the overlay, component and javacode to you onw project and
 | CUSTOM_ENV_CHATAEM_HMAC_KEY  | secret  | HMAC key used to sign the JWT used to authorize the ChatAEM session. Must be in sync with cloudfront keyvaluestore the ChatAEM infra |
 | CUSTOM_ENV_CHATAEM_URL | env     | Public facing URL of the ChatAEM infrastructure. Can be configured in the infra project. |
 
+# Dependencies
+
+Make sure to have the following projetcs rolled out:
+
+| Project  | Purpose |
+| -------- | ------- | 
+| [ChatAEM Client App](https://github.com/thomashartm/rockstar-2024-client)| ChatAEM RAG application and LLM integration API. |
+| [ChatAEM Terraform Infrastructure](https://github.com/thomashartm/rockstar-2024-client) | Provides the necessary AWS infrastructure. |
+| [ChatAEM Embeddings](https://github.com/thomashartm/rockstar-2024-embed) | Embeddings generation scripts |
+
+
